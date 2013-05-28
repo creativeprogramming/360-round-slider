@@ -162,11 +162,28 @@
 		
 			if(val === self.options.list[i]){
 				degrees = i*360/self.num;
-				self.jump(self, degrees);
+				jump(self, degrees);
 			}
 		}
 	};
-			
+	
+	/**
+	* init events
+	* @param {Object} self - 'this' object
+	*/
+	var init_events = function(self){
+		
+		//jump_event api
+		self.root.on(self.jump_event, function(e, degrees_angle){
+			jump(self, degrees_angle);
+		});
+		
+		//jump_value_event api
+		self.root.on(self.jump_value_event, function(e, val){
+			jump_value(self, val);
+		});
+	};
+	
 	/**
 	* init
 	* @param {Object} options - user options
@@ -181,7 +198,7 @@
 			,root: root
 			,value: null
 			,num: null
-			,current_handle_angle_degrees: null
+			,current_handle_angle_degrees: null			
 			
 			//const
 			,keys: {ENTER:13, LEFT:37, UP:38, RIGHT:39, DOWN:40}
@@ -191,6 +208,11 @@
 			,circle: null
 			,drag: null
 			,movement: null
+			
+			//events
+			,jump_event: 'jump_event'
+			,jump_value_event: 'jump_value_event'			
+			
 		};
 		
 		self.options = $.extend({	
@@ -206,6 +228,7 @@
 			
 			,current_handle_angle_degrees: 0
 			,angle_changed_callback: null
+			,on_load: null
 			
 			,unit_sign: '' //%, px, \u00b0
 		},options);	
@@ -225,6 +248,9 @@
 													   
 			//init movement instance
 			self.movement = new $.fn.round_slider.movement(self.options, self.circle, container_data.handle_radius);	
+			
+			//init events
+			init_events(self);
 			
 			//init drag
 			self.drag = new $.fn.round_slider.drag(self.options, container_data.handle, function(e){
@@ -258,6 +284,11 @@
 				
 			//init start input field value
 			container_data.input_field.val(get_min(self) + self.options.unit_sign); 
+			
+			//onload callback
+			if($.isFunction(self.options.on_load)){
+				self.options.on_load();
+			}
 		});
 				
 		return $.extend(this, self);  
@@ -268,18 +299,20 @@
 	/**
 	* jump
 	* @param {number} degrees_angle
-	*/
+	
 	init.prototype.jump = function(degrees_angle){
 		jump(this, degrees_angle);
 	};
+	*/
 	
 	/**
 	* jump to value
 	* @param {number} val
-	*/
-	init.prototype.jump_value = function(self, val){
-		jump_value(self, val);
+	
+	init.prototype.jump_value = function(val){
+		jump_value(this, val);
 	};
+	*/
 	
 	/** 
 	* 360 round slider
@@ -292,9 +325,14 @@
 		
 		return this.each(function(){
 			
-			var self; 
+			var self
+				,root; 
 			
-			self = new init(user_options, $(this));
+			root = $(this);
+			self = new init(user_options, root);
+			
+			//save api
+			//root.data('round_slider', self);
 						
 			return self;	
 		});
