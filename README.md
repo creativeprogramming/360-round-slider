@@ -24,3 +24,7 @@
 * License: Dual licensed under the MIT and GPL licenses
 
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/creativeprogramming/360-round-slider/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
